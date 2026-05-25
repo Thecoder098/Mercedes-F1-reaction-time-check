@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercedes AMG Reaction Time</title>
+
+<style>
+    body{
+        margin:0;
+        background:#000;
+        color:white;
+        font-family:Arial, sans-serif;
+        overflow:hidden;
+        text-align:center;
+    }
+
+    h1{
+        margin-top:40px;
+        font-size:60px;
+        color:silver;
+        text-shadow:0 0 20px #00bfff;
+    }
+
+    p{
+        color:#bbb;
+        font-size:20px;
+    }
+
+    .lights{
+        margin-top:80px;
+        display:flex;
+        justify-content:center;
+        gap:25px;
+    }
+
+    .light{
+        width:90px;
+        height:90px;
+        border-radius:50%;
+        background:#300;
+        box-shadow:0 0 20px #111;
+        transition:0.2s;
+    }
+
+    .active{
+        background:red;
+        box-shadow:
+            0 0 20px red,
+            0 0 40px red,
+            0 0 60px red;
+    }
+
+    .green{
+        background:#00ff66 !important;
+        box-shadow:
+            0 0 20px #00ff66,
+            0 0 40px #00ff66,
+            0 0 60px #00ff66;
+    }
+
+    .controls{
+        margin-top:70px;
+    }
+
+    button{
+        padding:18px 40px;
+        border:none;
+        border-radius:12px;
+        font-size:20px;
+        cursor:pointer;
+        background:#00bfff;
+        color:black;
+        font-weight:bold;
+        transition:0.3s;
+    }
+
+    button:hover{
+        transform:scale(1.1);
+    }
+
+    .reaction{
+        margin-top:50px;
+        font-size:45px;
+        color:#00ffcc;
+    }
+
+    .message{
+        margin-top:20px;
+        font-size:28px;
+        color:#fff;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Mercedes AMG Reaction Time</h1>
+<p>Wait for GREEN — then CLICK FAST!</p>
+
+<div class="lights">
+    <div class="light" id="l1"></div>
+    <div class="light" id="l2"></div>
+    <div class="light" id="l3"></div>
+    <div class="light" id="l4"></div>
+    <div class="light" id="l5"></div>
+</div>
+
+<div class="controls">
+    <button onclick="startGame()">START LIGHTS</button>
+    <button onclick="react()">GO!</button>
+</div>
+
+<div class="reaction" id="reaction">0.000 s</div>
+<div class="message" id="message"></div>
+
+<script>
+
+let startTime;
+let greenReady = false;
+let raceStarted = false;
+
+function resetLights(){
+    for(let i=1;i<=5;i++){
+        document.getElementById("l"+i).classList.remove("active");
+        document.getElementById("l"+i).classList.remove("green");
+    }
+}
+
+function startGame(){
+
+    resetLights();
+
+    greenReady = false;
+    raceStarted = true;
+
+    document.getElementById("message").innerText = "";
+    document.getElementById("reaction").innerText = "0.000 s";
+
+    for(let i=1;i<=5;i++){
+
+        setTimeout(() => {
+            document.getElementById("l"+i).classList.add("active");
+        }, i * 1000);
+    }
+
+    let randomDelay = Math.random() * 2000 + 1000;
+
+    setTimeout(() => {
+
+        resetLights();
+
+        for(let i=1;i<=5;i++){
+            document.getElementById("l"+i).classList.add("green");
+        }
+
+        greenReady = true;
+        startTime = Date.now();
+
+    }, 6000 + randomDelay);
+}
+
+function react(){
+
+    if(!raceStarted) return;
+
+    if(!greenReady){
+
+        document.getElementById("message").innerText =
+        "FALSE START!";
+        document.getElementById("message").style.color = "red";
+
+        raceStarted = false;
+        return;
+    }
+
+    let reactionTime = (Date.now() - startTime) / 1000;
+
+    document.getElementById("reaction").innerText =
+        reactionTime.toFixed(3) + " s";
+
+    if(reactionTime < 0.2){
+        document.getElementById("message").innerText =
+        "INSANE AMG REFLEXES";
+    }
+    else if(reactionTime < 0.35){
+        document.getElementById("message").innerText =
+        "PRO DRIVER";
+    }
+    else{
+        document.getElementById("message").innerText =
+        "KEEP PRACTICING";
+    }
+
+    document.getElementById("message").style.color = "#00ffcc";
+
+    raceStarted = false;
+}
+
+</script>
+
+</body>
+</html>
